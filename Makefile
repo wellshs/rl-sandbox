@@ -1,0 +1,2 @@
+monitor:
+	tensorboard --logdir=./logs

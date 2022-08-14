@@ -17,7 +17,7 @@ entrypoints==0.4
 executing==0.9.1
 fastjsonschema==2.16.1
 fonttools==4.34.4
-gym==0.25.0
+gym==0.25.1
 gym-notices==0.0.7
 importlib-metadata==4.12.0
 importlib-resources==5.9.0
