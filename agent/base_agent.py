@@ -3,7 +3,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 class BaseAgent:
     def __init__(self):
-        self.writer = SummaryWriter(log_dir="./logs")
+        self.writer = SummaryWriter(log_dir=f"./logs/{self.__class__.__name__}")
 
     def train(self):
         raise NotImplementedError

@@ -75,9 +75,7 @@ class DQN(BaseAgent):
 
             epsilon = self.get_epsilon(frame_idx)
             action = self.behaviour_network.epsilon_act(
-                torch.unsqueeze(
-                    torch.tensor(self.env.reset(), dtype=torch.float32), dim=0
-                ),
+                torch.unsqueeze(torch.tensor(state, dtype=torch.float32), dim=0),
                 epsilon=epsilon,
             )
             next_state, reward, done, _ = self.env.step(action)
@@ -94,10 +92,10 @@ class DQN(BaseAgent):
             episode_reward += reward
 
             if done:
-                state = self.env.reset()
                 episode_index += 1
                 self.writer.add_scalar("episode_reward", episode_reward, episode_index)
                 episode_reward = 0
+                state = self.env.reset()
 
             if len(self.replay_buffer) > self.batch_size:
                 loss = self.update_model()
