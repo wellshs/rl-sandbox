@@ -38,7 +38,7 @@ class DQN(BaseAgent):
         self.epsilon_decay = epsilon_decay
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.sync_period = sync_period
-        self.optimizer = optimizer(self.behaviour_network.parameters())
+        self.optimizer = optimizer(self.behaviour_network.parameters(), lr=0.00025)
 
     def update_model(self):
         transitions = self.replay_buffer.sample(batch_size=self.batch_size)
