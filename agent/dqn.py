@@ -45,9 +45,9 @@ class DQN(BaseAgent):
 
         state = torch.stack([t.state for t in transitions])
         next_state = torch.stack([t.next_state for t in transitions])
-        action = torch.tensor([t.action for t in transitions])
-        reward = torch.tensor([t.reward for t in transitions])
-        done = torch.tensor([t.done for t in transitions])
+        action = torch.tensor([t.action for t in transitions]).to(self.device)
+        reward = torch.tensor([t.reward for t in transitions]).to(self.device)
+        done = torch.tensor([t.done for t in transitions]).to(self.device)
 
         q_values = self.target_network(state)
         next_q_values = self.target_network(next_state)
@@ -69,7 +69,7 @@ class DQN(BaseAgent):
 
     def train(self):
         state = self.env.reset()
-        state_tensor = torch.tensor(state, dtype=torch.float32)
+        state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device)
         episode_reward = 0
         episode_index = 0
         for frame_idx in tqdm(range(1, self.num_frames + 1)):
@@ -80,7 +80,9 @@ class DQN(BaseAgent):
                 epsilon=epsilon,
             )
             next_state, reward, done, _ = self.env.step(action)
-            next_state_tensor = torch.tensor(next_state, dtype=torch.float32)
+            next_state_tensor = torch.tensor(next_state, dtype=torch.float32).to(
+                self.device
+            )
             self.replay_buffer.push(
                 Transition(
                     state_tensor,
@@ -98,7 +100,7 @@ class DQN(BaseAgent):
                 self.writer.add_scalar("episode_reward", episode_reward, episode_index)
                 episode_reward = 0
                 state = self.env.reset()
-                state_tensor = torch.tensor(state, dtype=torch.float32)
+                state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device)
 
             if len(self.replay_buffer) > self.batch_size:
                 loss = self.update_model()
@@ -112,9 +114,10 @@ class DQN(BaseAgent):
         for _ in range(num_episodes):
             episode_reward = 0
             state = env.reset()
+            state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device)
             while True:
                 action = self.target_network.epsilon_act(
-                    torch.unsqueeze(torch.tensor(state, dtype=torch.float32), dim=0),
+                    torch.unsqueeze(state_tensor, dim=0),
                     epsilon,
                 )
                 state, reward, done, _ = env.step(action)
